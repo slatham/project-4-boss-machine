@@ -1,6 +1,7 @@
 const express = require('express');
 const apiRouter = express.Router();
 const database = require('./db.js');
+const checkMillionDollarIdea = require('./checkMillionDollarIdea.js');
 
 
 // middleware to define the current working model
@@ -73,22 +74,30 @@ apiRouter.delete(['/minions/:id','/ideas/:id'], (req,res,next) =>{
 	res.status(204).send();
 });
 
-apiRouter.post(['/minions','/ideas'], (req,res,next) => {
+apiRouter.post(['/minions'],  (req,res,next) => {
 //debugger
 	const newModel = database.addToDatabase(req.modelType,req.body);
 	res.status(201).send(newModel);
 
 });
 
+apiRouter.post(['/ideas'], checkMillionDollarIdea, (req,res,next) => {
+//debugger
+	const newModel = database.addToDatabase(req.modelType,req.body);
+	res.status(201).send(newModel);
+
+});
+
+
 apiRouter.delete('/meetings', (req,res,next) => {
-debugger
+
 database.deleteAllFromDatabase(req.modelType);
 res.status(204).send();
 
 });
 
 apiRouter.post('/meetings', (req,res,next) => {
-debugger
+
 	const meeting = database.createMeeting();
 	const newModel = database.addToDatabase('meetings',meeting);
 	res.status(201).send(meeting);
