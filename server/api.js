@@ -6,6 +6,7 @@ const database = require('./db.js');
 // middleware to define the current working model
 // (minions, ideas etc) and attach it to the req
 apiRouter.use((req,res,next) => {
+//	debugger
 	// pull the url from the req
 	const url = req.url;
 	// get the part of the url that says minions, ideas etc..
@@ -29,8 +30,7 @@ apiRouter.use((req,res,next) => {
 // add a router.param to DRY the code
 // parse the id for each of the models
 apiRouter.param('id', (req,res,next,id) => {
-debugger
-
+//debugger
 	// get the model Type by Id from the database
 	const modelReturned = database.getFromDatabaseById(req.modelType, id);
 	// Check if the model was returned ok
@@ -49,7 +49,7 @@ debugger
 // /api base becuase this is a router mounted at
 // /api. get all minions, ideas etc ...
 apiRouter.get(['/minions','/ideas','/meetings'], (req,res,next) => {
-debugger
+
 	res.send(database.getAllFromDatabase(req.modelType));
 });
 
@@ -62,12 +62,38 @@ apiRouter.get(['/minions/:id','/ideas/:id'], (req,res,next) => {
 
 // update a minion, idea etc
 apiRouter.put(['/minions/:id','/ideas/:id'], (req,res,next) => {
-debugger
+
 	const updatedModel = database.updateInstanceInDatabase(req.modelType,req.body);
 	res.send(updatedModel);
 
 });
 
+apiRouter.delete(['/minions/:id','/ideas/:id'], (req,res,next) =>{
+	database.deleteFromDatabasebyId(req.modelType,req.modelReturned.id);
+	res.status(204).send();
+});
+
+apiRouter.post(['/minions','/ideas'], (req,res,next) => {
+//debugger
+	const newModel = database.addToDatabase(req.modelType,req.body);
+	res.status(201).send(newModel);
+
+});
+
+apiRouter.delete('/meetings', (req,res,next) => {
+debugger
+database.deleteAllFromDatabase(req.modelType);
+res.status(204).send();
+
+});
+
+apiRouter.post('/meetings', (req,res,next) => {
+debugger
+	const meeting = database.createMeeting();
+	const newModel = database.addToDatabase('meetings',meeting);
+	res.status(201).send(meeting);
+
+});
 
 
 
