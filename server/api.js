@@ -26,14 +26,18 @@ debugger
 	}
 });
 
+// handle get requests.  Note we don't specify the
+// /api base becuase this is a router mounted at
+// /api. get all minions ...
 apiRouter.get('/minions', (req,res,next) => {
 
 	res.send(database.getAllFromDatabase('minions'));
 
 });
 
+// get an individual minion
 apiRouter.get('/minions/:id', (req,res,next) => {
-//debugger
+
 			// send back the minion - note all the hard work here is done in the
 			// router.params above.
 			res.send(req.modelReturned);
@@ -41,6 +45,13 @@ apiRouter.get('/minions/:id', (req,res,next) => {
 
 });
 
+// update a minion
+apiRouter.put('/minions/:id', (req,res,next) => {
+debugger
+	updatedMinion = database.updateInstanceInDatabase('minions',req.body);
+	res.send(updatedMinion);
+
+});
 
 
 
