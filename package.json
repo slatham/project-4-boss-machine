@@ -6,6 +6,8 @@
   "scripts": {
     "test": "cross-env PORT=8000 mocha --watch",
     "start-dev": "webpack -w & nodemon --watch server.js --watch server/",
+    "startdbg": "node --inspect server.js",
+    "testdbg": "mocha --inspect-brk",
     "start": "nodemon --watch server.js --watch server/",
     "postinstall": "webpack"
   },
