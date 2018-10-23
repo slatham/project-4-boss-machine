@@ -11,7 +11,7 @@ const checkMillionDollarIdea = require('./checkMillionDollarIdea.js');
 // shoujld run for every request so at the top of the
 // list in this file
 apiRouter.use((req,res,next) => {
-	debugger
+	//debugger
 	// pull the url from the req
 	const url = req.url;
 	// get the part of the url that says minions, ideas etc..
@@ -52,30 +52,41 @@ apiRouter.use('/minions/:id/work', workRouter);
 workRouter.get('/', (req,res,next) => {
 //debugger
 // get all work from the db
-const work = database.getAllFromDatabase('work').filter(el => {
-	// filter out the work for the minion in question
-	el.minionId === req.modelReturned.id;
+const work = database.getAllFromDatabase('work');
+
+workFiltered = work.filter(el => el.minionId === req.modelReturned.id);
+
+res.send(workFiltered);
 
 });
 
-res.send(work);
+workRouter.post('/', (req,res,next) => {
+
+	//debugger
+	const newModel = database.addToDatabase('work',req.body);
+	res.status(201).send(newModel);
 
 });
 
-workRouter.put('/', (req,res,next) => {
-
-	debugger
-
-
+workRouter.delete('/:id', (req,res,next) =>{
+	
+	database.deleteFromDatabasebyId('work',req.params.id);
+	res.status(204).send();
 });
 
+workRouter.put('/:id', (req,res,next) => {
+//debugger
+	const updatedModel = database.updateInstanceInDatabase('work',req.body);
+	res.send(updatedModel);
+
+});
 
 
 
 // add a router.param to DRY the code
 // parse the id for each of the models
 apiRouter.param('id', (req,res,next,id) => {
-debugger
+//debugger
 	// get the model Type by Id from the database
 	const modelReturned = database.getFromDatabaseById(req.modelType, id);
 	// Check if the model was returned ok
@@ -94,13 +105,13 @@ debugger
 // /api base becuase this is a router mounted at
 // /api. get all minions, ideas etc ...
 apiRouter.get(['/minions','/ideas','/meetings'], (req,res,next) => {
-debugger
+//debugger
 	res.send(database.getAllFromDatabase(req.modelType));
 });
 
 // get an individual minion or idea etc
 apiRouter.get(['/minions/:id','/ideas/:id'], (req,res,next) => {
-	debugger
+	//debugger
 			// send back the minion - note all the hard work here is done in the
 			// router.params above.
 			res.send(req.modelReturned);
@@ -108,7 +119,7 @@ apiRouter.get(['/minions/:id','/ideas/:id'], (req,res,next) => {
 
 // update a minion, idea etc
 apiRouter.put(['/minions/:id','/ideas/:id'], (req,res,next) => {
-
+//debugger
 	const updatedModel = database.updateInstanceInDatabase(req.modelType,req.body);
 	res.send(updatedModel);
 

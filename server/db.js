@@ -118,6 +118,7 @@ const isValidIdea = (instance) => {
 }
 
 const isValidWork = (instance) => {
+  debugger
   instance.title = instance.title || '';
   instance.description = instance.description || '';
   if (typeof instance.title !== 'string' || typeof instance.description !== 'string') {
@@ -132,7 +133,7 @@ const isValidWork = (instance) => {
     return minion.id === instance.minionId;
   });
   if (!isValidMinionId) {
-    throw new Error('Work must have a valid minionId that actually exists in the database');
+   throw new Error('Work must have a valid minionId that actually exists in the database');
   }
   return true;
 }
