@@ -1,13 +1,17 @@
 const express = require('express');
 const apiRouter = express.Router();
+// merge params uses the below apiRouter.params
+// middleware to pivot from one model to the next
+const workRouter = express.Router({mergeParams:true});
 const database = require('./db.js');
 const checkMillionDollarIdea = require('./checkMillionDollarIdea.js');
 
-
 // middleware to define the current working model
 // (minions, ideas etc) and attach it to the req
+// shoujld run for every request so at the top of the
+// list in this file
 apiRouter.use((req,res,next) => {
-//	debugger
+	debugger
 	// pull the url from the req
 	const url = req.url;
 	// get the part of the url that says minions, ideas etc..
@@ -28,10 +32,50 @@ apiRouter.use((req,res,next) => {
 
 });
 
+// notice the order of this Merge parameter.  
+//It is after the above middleware so that runs first
+// we mount our workRouter on the id param
+apiRouter.use('/minions/:id/work', workRouter);
+
+
+// now our work router goes here.  Note we just need "/"
+// becuase we've mounted the router on the apiRouter at
+// /minions/:id/work.  Becuase we set mergeParams on the
+// workRouter, we get all of the params that are assigned when the 
+// apiRouter is called.
+// So for the route /minions/2/work, first the apiRouter is invoked
+// that then matches the above apiRouter.use, then the next match is
+// the next apiRouter middleware to match is the apiRouter.params below,
+// this is where we pivot on each minion has many work
+// once that has run our workRouter will be mounted and matched. So
+// for a get request we'll match the below route. 
+workRouter.get('/', (req,res,next) => {
+//debugger
+// get all work from the db
+const work = database.getAllFromDatabase('work').filter(el => {
+	// filter out the work for the minion in question
+	el.minionId === req.modelReturned.id;
+
+});
+
+res.send(work);
+
+});
+
+workRouter.put('/', (req,res,next) => {
+
+	debugger
+
+
+});
+
+
+
+
 // add a router.param to DRY the code
 // parse the id for each of the models
 apiRouter.param('id', (req,res,next,id) => {
-//debugger
+debugger
 	// get the model Type by Id from the database
 	const modelReturned = database.getFromDatabaseById(req.modelType, id);
 	// Check if the model was returned ok
@@ -50,12 +94,13 @@ apiRouter.param('id', (req,res,next,id) => {
 // /api base becuase this is a router mounted at
 // /api. get all minions, ideas etc ...
 apiRouter.get(['/minions','/ideas','/meetings'], (req,res,next) => {
-
+debugger
 	res.send(database.getAllFromDatabase(req.modelType));
 });
 
 // get an individual minion or idea etc
 apiRouter.get(['/minions/:id','/ideas/:id'], (req,res,next) => {
+	debugger
 			// send back the minion - note all the hard work here is done in the
 			// router.params above.
 			res.send(req.modelReturned);

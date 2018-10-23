@@ -1,5 +1,5 @@
 const checkMillionDollarIdea = (req,res,next) => {
-debugger
+//debugger
 
 		const weeklyRevenue = req.body.weeklyRevenue;
 		const numWeeks = req.body.numWeeks;
