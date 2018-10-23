@@ -75,9 +75,22 @@ workRouter.delete('/:id', (req,res,next) =>{
 });
 
 workRouter.put('/:id', (req,res,next) => {
-//debugger
-	const updatedModel = database.updateInstanceInDatabase('work',req.body);
-	res.send(updatedModel);
+debugger
+
+	minionId = database.getFromDatabaseById('minions',req.body.minionId);
+	if (minionId){
+
+		const updatedModel = database.updateInstanceInDatabase('work',req.body);
+		res.send(updatedModel);
+
+	} else {
+
+		res.status(400).send();
+
+	}
+	
+
+	
 
 });
 
